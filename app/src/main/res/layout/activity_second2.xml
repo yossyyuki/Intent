@@ -10,4 +10,15 @@
         android:layout_height="wrap_content"
         android:text="受注番号" />
 
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="次へ" />
+
+
 </LinearLayout>

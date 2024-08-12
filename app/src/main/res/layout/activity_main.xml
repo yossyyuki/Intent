@@ -11,11 +11,20 @@
     android:paddingBottom="16dp"
     tools:context=".MainActivity">
 
-<!--    activityのレイアウトは表示させないためにコメントアウト-->
+<!--    activityのボタンレイアウトは表示させないためにコメントアウト-->
 <!--    <Button-->
 <!--        android:id="@+id/button"-->
+<!--        android:layout_alignParentLeft="true"-->
+<!--        android:layout_centerVertical="true"-->
 <!--        android:layout_width="wrap_content"-->
 <!--        android:layout_height="wrap_content"-->
 <!--        android:text="計測を始める" />-->
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
 
 </RelativeLayout>

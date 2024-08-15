@@ -12,10 +12,23 @@
     android:paddingBottom="16dp"
     tools:context=".MainActivity">
 
+<!--    TopFragmentにて受注番号を入力し、ボタン”次へ”でInputFragmentを表示させたい-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="受注番号を入力" />
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TopFragmnet" />
+        android:text="次へ" />
+
 
 </LinearLayout>

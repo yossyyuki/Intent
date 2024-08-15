@@ -13,21 +13,21 @@ open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
+
 //        setContentView(R.layout.fragment_top)は不要なのでコメントアウト
 //        setContentView(R.layout.fragment_top)
-        setContentView(view)
+        setContentView(binding.root)
 
-//        <!--    activityのボタンレイアウトは表示させないためにコメントアウト-->
-//        binding.button.text = "計測する"
-          binding.textView.text = "計測を始めます"
+//
+        binding.textView.text = "作業時間を計測します"
 
-//        ActivityからFragmentへの遷移
+//        Activity上にTopFragmentを表示
         val fragment = TopFragment()
         val fragmentTransaction = supportFragmentManager.beginTransaction()
 
         fragmentTransaction.add(R.id.container, fragment)
         fragmentTransaction.commit()
+
     }
 }
 

@@ -23,11 +23,20 @@ open class TopFragment : Fragment() {
     }
 
 
-//    以下の記述でbutton1をクリックすることでInputFragmentを表示させたい。
+    //    以下の記述でbutton1をクリックすることでInputFragmentを表示させたい。
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.button1.setOnClickListener {
             binding.button1.text = "ここをクリックでInputを表示"
+
+        }
+        binding.button1.setOnClickListener {
+            // FragmentManagerの取得
+
+            // トランザクションの生成・コミット
+            val ft = parentFragmentManager.beginTransaction()
+            ft.replace(R.id.container,InputFragment())
+            ft.commit()
 
         }
     }

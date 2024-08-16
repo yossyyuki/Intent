@@ -11,29 +11,29 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="工程を選択" />
+        android:text="作業者を選択" />
 
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="荒磨" />
+        android:text="荒木" />
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
-        android:text="塗装"/>
+        android:text="三島"/>
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="組立"/>
+        android:text="井上"/>
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="次へ" />

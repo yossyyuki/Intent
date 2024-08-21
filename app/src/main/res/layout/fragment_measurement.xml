@@ -13,28 +13,28 @@
         android:layout_height="wrap_content"
         android:text="計測を始める" />
 
-<!--    時間計測用にstart/stop/resetを配置したがエラーのためコメントアウト中-->
-<!--    <Button-->
-<!--        android:id="@+id/start"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="32dp"-->
-<!--        android:text="@string/command_start"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--    時間計測用にstart/stop/resetを配置-->
+    <Button
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:text="スタート"/>
+        app:layout_constraintStart_toStartOf="parent"/>
         app:layout_constraintTop_toBottomOf="@+id/timeText" />
 
 <!--    <Button-->
-        android:id="@+id/stop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:text="@string/command_stop"
+<!--        android:id="@+id/stop"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginEnd="16dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="32dp"-->
+<!--        android:text="@string/command_stop"-->
 <!--        app:layout_constraintEnd_toStartOf="@+id/reset"-->
 <!--        app:layout_constraintStart_toEndOf="@+id/start"-->
-        app:layout_constraintTop_toBottomOf="@+id/timeText" />
+<!--        app:layout_constraintTop_toBottomOf="@+id/timeText" />-->
 
 <!--    <Button-->
 <!--        android:id="@+id/reset"-->

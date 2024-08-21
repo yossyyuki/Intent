@@ -37,7 +37,7 @@ open class TopFragment : Fragment() {
             val ft = parentFragmentManager.beginTransaction()
             ft.replace(R.id.container,InputFragment())
             ft.commit()
-
+            ft.addToBackStack(null)
         }
     }
 

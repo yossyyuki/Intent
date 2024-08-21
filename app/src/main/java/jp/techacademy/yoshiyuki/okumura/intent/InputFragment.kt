@@ -33,6 +33,7 @@ open class InputFragment : Fragment() {
             val ft = parentFragmentManager.beginTransaction()
             ft.replace(R.id.container, WorkerFragment())
             ft.commit()
+            ft.addToBackStack(null)
         }
     }
         override fun onDestroyView() {

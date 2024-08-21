@@ -33,6 +33,7 @@ open class WorkerFragment : Fragment() {
             val ft = parentFragmentManager.beginTransaction()
             ft.replace(R.id.container, MeasurementFragment())
             ft.commit()
+            ft.addToBackStack(null)
         }
     }
 

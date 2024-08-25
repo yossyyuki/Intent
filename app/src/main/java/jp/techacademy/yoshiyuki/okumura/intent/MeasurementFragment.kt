@@ -66,19 +66,15 @@ open class MeasurementFragment : Fragment() {
                 handler.removeCallbacks(runnable)      // キューキャンセル
             }
 //                // resetボタン押された時の処理
-//                reset.setOnClickListener {
-//                    handler.removeCallbacks(runnable)      // キューキャンセル
-//                    timeValue = 0                          // 秒カウンタークリア
-//                    timeToText()?.let {                  // timeToText()で表示データを作り
-//                        timeText.text = it                // timeText.textに表示
-//                    }
-//                }
+            binding.reset.setOnClickListener {
+                handler.removeCallbacks(runnable)      // キューキャンセル
+                timeValue = 0                          // 秒カウンタークリア
+                timeToText()?.let {                  // timeToText()で表示データを作り
+                    binding.timeText.text = it                // timeText.textに表示
+                }
+            }
         }
-//
-//
 
-
-//
     }
 
 

@@ -35,6 +35,12 @@ open class WorkerFragment : Fragment() {
             ft.commit()
             ft.addToBackStack(null)
         }
+        binding.button4.setOnClickListener {
+            // WorkerFragmentに戻る
+            val ft = parentFragmentManager.beginTransaction()
+            ft.replace(R.id.container, InputFragment())
+            ft.commit()
+        }
     }
 
     override fun onDestroyView() {

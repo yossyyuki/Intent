@@ -26,9 +26,6 @@ open class MeasurementFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.button.setOnClickListener {
-
-        }
-        binding.button.setOnClickListener {
             // FragmentManagerの取得
             // トランザクションの生成・コミット
             val ft = parentFragmentManager.beginTransaction()
@@ -36,14 +33,20 @@ open class MeasurementFragment : Fragment() {
             ft.commit()
             ft.addToBackStack(null)
         }
-        //ストップウォッチ用のコード
+            binding.button1.setOnClickListener {
+                // WorkerFragmentに戻る
+                val ft = parentFragmentManager.beginTransaction()
+                ft.replace(R.id.container, WorkerFragment())
+                ft.commit()
+            }
+            //ストップウォッチ用のコード
 
-        val handler = Handler()                      //
-        var timeValue = 0                              // 秒カウンター
+            val handler = Handler()                      //
+            var timeValue = 0                              // 秒カウンター
 
-        //
+            //
 
-        binding.start.setOnClickListener {
+//        binding.start.setOnClickListener {
 
 //                // Handler(スレット間通信：イベントキュー？)
             val runnable = object : Runnable {
@@ -73,30 +76,30 @@ open class MeasurementFragment : Fragment() {
                     binding.timeText.text = it                // timeText.textに表示
                 }
             }
+//        }
+
         }
 
-    }
+
+        override fun onDestroyView() {
+            super.onDestroyView()
+            _binding = null
+        }
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-
-    private fun timeToText(time: Int = 0): String? {
-        return if (time < 0) {
-            null                                    // 時刻が0未満の場合 null
-        } else if (time == 0) {
-            "00:00:00"                            // ０なら
-        } else {
-            val h = time / 3600
-            val m = time % 3600 / 60
-            val s = time % 60
-            "%1$02d:%2$02d:%3$02d".format(h, m, s)  // 表示に整形
+        private fun timeToText(time: Int = 0): String? {
+            return if (time < 0) {
+                null                                    // 時刻が0未満の場合 null
+            } else if (time == 0) {
+                "00:00:00"                            // ０なら
+            } else {
+                val h = time / 3600
+                val m = time % 3600 / 60
+                val s = time % 60
+                "%1$02d:%2$02d:%3$02d".format(h, m, s)  // 表示に整形
+            }
         }
     }
-}
 
 
 

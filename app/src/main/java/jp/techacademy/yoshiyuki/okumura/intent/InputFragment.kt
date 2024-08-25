@@ -35,11 +35,19 @@ open class InputFragment : Fragment() {
             ft.commit()
             ft.addToBackStack(null)
         }
-    }
-        override fun onDestroyView() {
-            super.onDestroyView()
-            _binding = null
+        binding.button5.setOnClickListener {
+            // TopFragmentに戻る
+            val ft = parentFragmentManager.beginTransaction()
+            ft.replace(R.id.container, TopFragment())
+            ft.commit()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
+
 
 

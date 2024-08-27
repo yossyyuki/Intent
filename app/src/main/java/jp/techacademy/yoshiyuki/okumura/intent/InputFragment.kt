@@ -29,7 +29,7 @@ open class InputFragment : Fragment() {
         }
         binding.button2.setOnClickListener {
             // FragmentManagerの取得
-            // トランザクションの生成・コミット
+            // トランザクションの生成・コミット　WorkerFragmentを表示
             val ft = parentFragmentManager.beginTransaction()
             ft.replace(R.id.container, WorkerFragment())
             ft.commit()

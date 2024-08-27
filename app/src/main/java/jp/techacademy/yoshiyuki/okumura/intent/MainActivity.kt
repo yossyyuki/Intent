@@ -19,7 +19,7 @@ open class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 //
-        binding.textView.text = "作業時間を計測します"
+//        binding.textView.text = "作業時間を計測します"
 
 //        Activity上にTopFragmentを表示
         val fragment = TopFragment()

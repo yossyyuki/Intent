@@ -33,7 +33,7 @@ open class MeasurementFragment : Fragment() {
             ft.commit()
             ft.addToBackStack(null)
         }
-            binding.button1.setOnClickListener {
+            binding.ToWorkerFragment.setOnClickListener {
                 // WorkerFragmentに戻る
                 val ft = parentFragmentManager.beginTransaction()
                 ft.replace(R.id.container, WorkerFragment())

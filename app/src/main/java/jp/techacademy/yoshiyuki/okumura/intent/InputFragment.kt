@@ -35,7 +35,7 @@ open class InputFragment : Fragment() {
             ft.commit()
             ft.addToBackStack(null)
         }
-        binding.button5.setOnClickListener {
+        binding.toTopFragment.setOnClickListener {
             // TopFragmentに戻る
             val ft = parentFragmentManager.beginTransaction()
             ft.replace(R.id.container, TopFragment())

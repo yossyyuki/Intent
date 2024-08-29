@@ -1,48 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    tools:context=".MainActivity">
+    <!--    tools:context=".MainActivity">-->
 
 
     <TextView
+        android:id="@+id/toptext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="工程を選択" />
+        android:text="工程を選択"
+        android:textSize="22sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
 
     <com.google.android.material.chip.Chip
-        android:id="@+id/chip3"
+        android:id="@+id/chip1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="荒磨" />
-
-    <com.google.android.material.chip.Chip
-        android:id="@+id/chip"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="塗装"/>
+        android:layout_marginStart="16dp"
+        android:text="荒磨"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/chip2"
+        app:layout_constraintVertical_bias="0.11" />
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="組立"/>
+        android:layout_marginStart="16dp"
+        android:text="塗装"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/chip3"
+        app:layout_constraintVertical_bias="0.102" />
+
+    <com.google.android.material.chip.Chip
+        android:id="@+id/chip3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="組立"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/toptext"
+        app:layout_constraintVertical_bias="0.098" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="次へ" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="268dp"
+        android:text="次へ"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/toTopFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="戻る" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="340dp"
+        android:text="戻る"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

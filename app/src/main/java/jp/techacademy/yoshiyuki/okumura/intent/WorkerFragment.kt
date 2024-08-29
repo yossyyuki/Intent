@@ -24,10 +24,10 @@ open class WorkerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.button3.setOnClickListener {
+        binding.nextToMeasurementFragment.setOnClickListener {
 
         }
-        binding.button3.setOnClickListener {
+        binding.nextToMeasurementFragment.setOnClickListener {
             // FragmentManagerの取得
             // トランザクションの生成・コミット
             val ft = parentFragmentManager.beginTransaction()
@@ -35,8 +35,8 @@ open class WorkerFragment : Fragment() {
             ft.commit()
             ft.addToBackStack(null)
         }
-        binding.button4.setOnClickListener {
-            // WorkerFragmentに戻る
+        binding.ToInputFragment.setOnClickListener {
+            // InputFragmentに戻る
             val ft = parentFragmentManager.beginTransaction()
             ft.replace(R.id.container, InputFragment())
             ft.commit()

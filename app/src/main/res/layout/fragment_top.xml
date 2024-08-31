@@ -26,12 +26,12 @@
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/button1"
+        app:layout_constraintBottom_toTopOf="@+id/ToInputFragment"
         app:layout_constraintStart_toStartOf="parent"
         android:maxLength="5"       />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/ToInputFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="300dp"

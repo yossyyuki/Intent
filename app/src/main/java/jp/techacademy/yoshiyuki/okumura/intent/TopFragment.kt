@@ -11,9 +11,21 @@ import android.text.InputFilter
 import java.util.regex.Pattern
 import android.text.Spanned
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentTopBinding
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
+import io.realm.kotlin.ext.query
+import io.realm.kotlin.query.RealmScalarNullableQuery
+import io.realm.kotlin.query.max
+import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.PrimaryKey
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 open class TopFragment : Fragment() {
 
+    private lateinit var realm: Realm
     private var _binding: FragmentTopBinding? = null
     private val binding: FragmentTopBinding get() = _binding!!
 
@@ -25,25 +37,50 @@ open class TopFragment : Fragment() {
         return binding.root
     }
 
-
-    //    以下の記述でbutton1をクリックすることでInputFragmentを表示させたい。
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.ToInputFragment.setOnClickListener {
-            binding.ToInputFragment.text = "ここをクリックでInputを表示"
 
+        // Realmの設定
+        val config = RealmConfiguration.Builder(schema = setOf(InputData::class))
+            .name("myrealm.realm")
+            .build()
+        realm = Realm.open(config)
+
+        // データの保存
+        binding.editText.setOnClickListener {
+            val inputText = binding.editText.text.toString()
+
+            GlobalScope.launch {
+                realm.write {
+                    val maxId: RealmScalarNullableQuery<Long> = realm.query<InputData>().max<Long>("id")
+                    val nextId = (maxId ?: 0) + 1
+                    val data = copyToRealm(InputData().apply {
+                        id = nextId
+                        content = inputText
+                    })
+                }
+            }
         }
-        binding.ToInputFragment.setOnClickListener {
-            // FragmentManagerの取得
 
-            // トランザクションの生成・コミット
+        // データの読み込み
+        GlobalScope.launch {
+            val savedData = realm.query<InputData>().find()
+            savedData.lastOrNull()?.let { data ->
+                activity?.runOnUiThread {
+                    binding.editText.setText(data.content)
+                }
+            }
+        }
+
+        // Fragmentの切り替え
+        binding.ToInputFragment.setOnClickListener {
             val ft = parentFragmentManager.beginTransaction()
             ft.replace(R.id.container, InputFragment())
             ft.commit()
             ft.addToBackStack(null)
         }
-//        InputFilterを使用して文字数制限　 数字5桁-2桁
-//        -が自動で入るようにしたい
+
+        // InputFilterを使用して文字数制限  数字5桁-2桁
         val filter = object : InputFilter {
             val pattern: Pattern = Pattern.compile("^[0-9]{0,5}-?[0-9]{0,2}$")
             override fun filter(
@@ -62,15 +99,13 @@ open class TopFragment : Fragment() {
             }
         }
         binding.editText.filters = arrayOf(filter)
-
-//        InputFilterを入れたらonDestroyがエラーになった。なぜ？
-//            override fun onDestroyView() {
-//                super.onDestroyView()
-//                _binding = null
-            }
     }
 
-
-
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Fragmentのビューが破棄されたときにRealmインスタンスを閉じる
+        realm.close()
+        _binding = null // ビューの解放
+    }
+}
 

@@ -18,10 +18,7 @@ import io.realm.kotlin.query.RealmScalarNullableQuery
 import io.realm.kotlin.query.max
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 open class TopFragment : Fragment() {
 
@@ -37,6 +34,7 @@ open class TopFragment : Fragment() {
         return binding.root
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -46,14 +44,14 @@ open class TopFragment : Fragment() {
             .build()
         realm = Realm.open(config)
 
-        // データの保存
-        binding.editText.setOnClickListener {
-            val inputText = binding.editText.text.toString()
+        // データの保存　GlobalScope以下コードの意味が理解できていない
+        binding.ToInputFragment.setOnClickListener {
+            val inputText = binding.ToInputFragment.text.toString()
 
             GlobalScope.launch {
                 realm.write {
                     val maxId: RealmScalarNullableQuery<Long> = realm.query<InputData>().max<Long>("id")
-                    val nextId = (maxId ?: 0) + 1
+                    val nextId = (maxId.find() ?: 0) + 1
                     val data = copyToRealm(InputData().apply {
                         id = nextId
                         content = inputText

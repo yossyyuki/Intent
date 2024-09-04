@@ -5,6 +5,7 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 
 class InputData : RealmObject {
     @PrimaryKey
-    var id: Long = 0
+    /*LongをIntに変更*/
+    var id: Int = 0
     var content: String? = null
 }

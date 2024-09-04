@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.text.InputFilter
 import java.util.regex.Pattern
 import android.text.Spanned
+import android.util.Log
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentTopBinding
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -40,23 +41,31 @@ open class TopFragment : Fragment() {
 
         // Realmの設定
         val config = RealmConfiguration.Builder(schema = setOf(InputData::class))
-            .name("myrealm.realm")
+            .name("myrealm.realm") // データベースファイル名を指定
             .build()
         realm = Realm.open(config)
 
-        // データの保存　GlobalScope以下コードの意味が理解できていない
+        // データの保存　
         binding.ToInputFragment.setOnClickListener {
-            val inputText = binding.ToInputFragment.text.toString()
+            val inputText = binding.editText.text.toString()
 
             GlobalScope.launch {
                 realm.write {
-                    val maxId: RealmScalarNullableQuery<Long> = realm.query<InputData>().max<Long>("id")
-                    val nextId = (maxId.find() ?: 0) + 1
-                    val data = copyToRealm(InputData().apply {
-                        id = nextId
-                        content = inputText
-                    })
+                    try {
+                        /*<Long>を<Int>に変更*/
+                        val maxId: RealmScalarNullableQuery<Int> = query<InputData>().max<Int>("id")
+                        val nextId = (maxId.find() ?: 0) + 1
+                        copyToRealm(InputData().apply {
+                            id = nextId.toInt()
+                            content = inputText
+                        })
+                        Log.d("RealmData", "Data saved with id: $nextId")
+                    } catch (e: Exception) {
+                        Log.e("RealmData", "Error saving data: ${e.message}")
+                    }
                 }
+                printAllData()
+
             }
         }
 
@@ -65,7 +74,7 @@ open class TopFragment : Fragment() {
             val savedData = realm.query<InputData>().find()
             savedData.lastOrNull()?.let { data ->
                 activity?.runOnUiThread {
-                    binding.editText.setText(data.content)
+                    binding.ToInputFragment.setText(data.content)
                 }
             }
         }
@@ -79,24 +88,34 @@ open class TopFragment : Fragment() {
         }
 
         // InputFilterを使用して文字数制限  数字5桁-2桁
-        val filter = object : InputFilter {
-            val pattern: Pattern = Pattern.compile("^[0-9]{0,5}-?[0-9]{0,2}$")
-            override fun filter(
-                source: CharSequence,
-                start: Int,
-                end: Int,
-                dest: Spanned,
-                dstart: Int,
-                dend: Int
-            ): CharSequence? {
-                val result = dest.toString().substring(0, dstart) +
-                        source.toString().substring(start, end) +
-                        dest.toString().substring(dend)
-                val matcher = pattern.matcher(result)
-                return if (matcher.matches()) null else ""
+//        val filter = object : InputFilter {
+//            val pattern: Pattern = Pattern.compile("^[0-9]{0,5}-?[0-9]{0,2}$")
+//            override fun filter(
+//                source: CharSequence,
+//                start: Int,
+//                end: Int,
+//                dest: Spanned,
+//                dstart: Int,
+//                dend: Int
+//            ): CharSequence? {
+//                val result = dest.toString().substring(0, dstart) +
+//                        source.toString().substring(start, end) +
+//                        dest.toString().substring(dend)
+//                val matcher = pattern.matcher(result)
+//                return if (matcher.matches()) null else ""
+//            }
+//        }
+//        binding.editText.filters = arrayOf(filter)
+    }
+
+    /*Logcatを使用してrealmデータを確認*/
+    private suspend fun printAllData() {
+        realm.write {
+            val results = query<InputData>().find()
+            for (item in results) {
+                Log.d("RealmData", "Data: ${item.toString()}")
             }
         }
-        binding.editText.filters = arrayOf(filter)
     }
 
     override fun onDestroyView() {

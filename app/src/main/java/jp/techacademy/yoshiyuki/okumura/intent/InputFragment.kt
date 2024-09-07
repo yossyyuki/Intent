@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentInputBinding
 
@@ -24,10 +25,13 @@ open class InputFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.button2.setOnClickListener {
 
-        }
-        binding.button2.setOnClickListener {
+        // Bundleからデータを取得
+        val inputnumber = arguments?.getInt("TEXT_KEY")
+        // 取得したテキストをTextViewに表示
+        binding.textView.text = inputnumber.toString()
+
+        binding.ToWorkerFragment.setOnClickListener {
             // FragmentManagerの取得
             // トランザクションの生成・コミット　WorkerFragmentを表示
             val ft = parentFragmentManager.beginTransaction()
@@ -41,6 +45,8 @@ open class InputFragment : Fragment() {
             ft.replace(R.id.container, TopFragment())
             ft.commit()
         }
+
+
     }
 
     override fun onDestroyView() {

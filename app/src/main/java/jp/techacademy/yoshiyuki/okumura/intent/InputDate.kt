@@ -7,5 +7,5 @@ class InputData : RealmObject {
     @PrimaryKey
     /*LongをIntに変更*/
     var id: Int = 0
-    var content: String? = null
+    var orderNumber: Int = 0
 }

@@ -47,7 +47,7 @@ open class TopFragment : Fragment() {
 
         // データの保存　
         binding.ToInputFragment.setOnClickListener {
-            val inputText = binding.editText.text.toString()
+            val inputnumber = binding.editText.text.toString()
 
             GlobalScope.launch {
                 realm.write {
@@ -57,35 +57,36 @@ open class TopFragment : Fragment() {
                         val nextId = (maxId.find() ?: 0) + 1
                         copyToRealm(InputData().apply {
                             id = nextId.toInt()
-                            content = inputText
+                            orderNumber = inputnumber.toInt()
                         })
+                        // Bundleでデータを渡す
+                        val bundle = Bundle().apply {
+                            putInt("TEXT_KEY", inputnumber.toInt())
+                        }
+                        //InputFragmentにBundleをセット
+                        InputFragment().apply {
+                            arguments = bundle
+                        }
+
+                        val orderNumber =
+                            query<InputData>("id==${nextId}").find().first().orderNumber
                         Log.d("RealmData", "Data saved with id: $nextId")
+                        Log.d("RealmData", "Data saved with 受注番号: $orderNumber")
+
+                        //InputFragmentに遷移し、BackStackを有効にする
+                        val ft = parentFragmentManager.beginTransaction()
+                        ft.replace(R.id.container, InputFragment())
+                        ft.commit()
+                        ft.addToBackStack(null)
                     } catch (e: Exception) {
                         Log.e("RealmData", "Error saving data: ${e.message}")
                     }
                 }
-                printAllData()
 
             }
+
         }
 
-        // データの読み込み
-        GlobalScope.launch {
-            val savedData = realm.query<InputData>().find()
-            savedData.lastOrNull()?.let { data ->
-                activity?.runOnUiThread {
-                    binding.ToInputFragment.setText(data.content)
-                }
-            }
-        }
-
-        // Fragmentの切り替え
-        binding.ToInputFragment.setOnClickListener {
-            val ft = parentFragmentManager.beginTransaction()
-            ft.replace(R.id.container, InputFragment())
-            ft.commit()
-            ft.addToBackStack(null)
-        }
 
         // InputFilterを使用して文字数制限  数字5桁-2桁
 //        val filter = object : InputFilter {
@@ -108,15 +109,6 @@ open class TopFragment : Fragment() {
 //        binding.editText.filters = arrayOf(filter)
     }
 
-    /*Logcatを使用してrealmデータを確認*/
-    private suspend fun printAllData() {
-        realm.write {
-            val results = query<InputData>().find()
-            for (item in results) {
-                Log.d("RealmData", "Data: ${item.toString()}")
-            }
-        }
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

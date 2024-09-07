@@ -9,16 +9,18 @@
     <!--    tools:context=".MainActivity">-->
 
 
+    <!--parentを指定しているがparentはどこを指している？-->
+
     <TextView
         android:id="@+id/toptext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:text="工程を選択"
         android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
-<!--parentを指定しているがparentはどこを指している？-->
 
     <com.google.android.material.chip.Chip
         android:id="@+id/chip1"
@@ -54,7 +56,7 @@
         app:layout_constraintVertical_bias="0.098" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/ToWorkerFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -72,6 +74,17 @@
         android:text="戻る"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="213dp"
+        android:layout_height="28dp"
+        android:text="Received Text"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="155dp"
+        tools:layout_editor_absoluteY="9dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toTopFragment"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

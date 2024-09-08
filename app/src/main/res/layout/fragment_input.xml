@@ -8,9 +8,6 @@
     android:orientation="vertical">
     <!--    tools:context=".MainActivity">-->
 
-
-    <!--parentを指定しているがparentはどこを指している？-->
-
     <TextView
         android:id="@+id/toptext"
         android:layout_width="wrap_content"
@@ -79,12 +76,12 @@
         android:id="@+id/textView"
         android:layout_width="213dp"
         android:layout_height="28dp"
-        android:text="Received Text"
+        android:text="receivedText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toTopFragment"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="155dp"
-        tools:layout_editor_absoluteY="9dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toTopFragment"/>
+        tools:layout_editor_absoluteY="9dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

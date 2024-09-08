@@ -1,6 +1,7 @@
 package jp.techacademy.yoshiyuki.okumura.intent
 
 import android.content.Intent
+import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentInputBinding
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -64,7 +65,8 @@ open class TopFragment : Fragment() {
                             putInt("TEXT_KEY", inputnumber.toInt())
                         }
                         //InputFragmentにBundleをセット
-                        InputFragment().apply {
+                        //81行目で使用していたInputFragmentインスタンスをinputFragmentという変数にする
+                        val inputFragment = InputFragment().apply {
                             arguments = bundle
                         }
 
@@ -75,9 +77,11 @@ open class TopFragment : Fragment() {
 
                         //InputFragmentに遷移し、BackStackを有効にする
                         val ft = parentFragmentManager.beginTransaction()
-                        ft.replace(R.id.container, InputFragment())
+                        //inputFragmentをreplaceに渡すことでargumentsも含まれる。
+                        ft.replace(R.id.container, inputFragment)
                         ft.commit()
                         ft.addToBackStack(null)
+
                     } catch (e: Exception) {
                         Log.e("RealmData", "Error saving data: ${e.message}")
                     }

@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentInputBinding
 
+
 open class InputFragment : Fragment() {
 
     private var _binding: FragmentInputBinding? = null
@@ -52,8 +53,11 @@ open class InputFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+//        }
     }
 }
+
+
 
 
 

@@ -8,11 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import com.google.android.material.chip.Chip
+import io.realm.kotlin.Realm
+import io.realm.kotlin.RealmConfiguration
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentInputBinding
 
 
 open class InputFragment : Fragment() {
-
+    private lateinit var realm: Realm
     private var _binding: FragmentInputBinding? = null
     private val binding: FragmentInputBinding get() = _binding!!
 
@@ -27,33 +30,52 @@ open class InputFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Bundleからデータを取得
-        val inputnumber = arguments?.getInt("TEXT_KEY")
-        // 取得したテキストをTextViewに表示
-        binding.textView.text = inputnumber.toString()
+        // Realmの設定
+        val config = RealmConfiguration.Builder(schema = setOf(InputData::class))
+            .name("myrealm.realm") // データベースファイル名を指定
+            .build()
+        realm = Realm.open(config)
 
-        binding.ToWorkerFragment.setOnClickListener {
-            // FragmentManagerの取得
-            // トランザクションの生成・コミット　WorkerFragmentを表示
-            val ft = parentFragmentManager.beginTransaction()
-            ft.replace(R.id.container, WorkerFragment())
-            ft.commit()
-            ft.addToBackStack(null)
+        /*// データの保存　選択したChipを保存したい
+        * ChipGroupをセットしてsetOnCheckedChangeListenerでChipが選択されたら作動*/
+        binding.chipGroup.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId != View.NO_ID) {
+                val chip = group.findViewById<Chip>(checkedId)
+                val selectedText = chip.text.toString()
+
+
+                // Bundleからデータを取得
+                val inputnumber = arguments?.getInt("TEXT_KEY")
+                // 取得したテキストをTextViewに表示
+                binding.textView.text = inputnumber.toString()
+
+                binding.ToWorkerFragment.setOnClickListener {
+                    // FragmentManagerの取得
+                    // トランザクションの生成・コミット　WorkerFragmentを表示
+                    val ft = parentFragmentManager.beginTransaction()
+                    ft.replace(R.id.container, WorkerFragment())
+                    ft.commit()
+                    ft.addToBackStack(null)
+                }
+                binding.toTopFragment.setOnClickListener {
+                    // TopFragmentに戻る
+                    val ft = parentFragmentManager.beginTransaction()
+                    ft.replace(R.id.container, TopFragment())
+                    ft.commit()
+                }
+
+
+            }
+
+//            override fun onDestroyView() {
+//                super.onDestroyView()
+//                _binding = null
         }
-        binding.toTopFragment.setOnClickListener {
-            // TopFragmentに戻る
-            val ft = parentFragmentManager.beginTransaction()
-            ft.replace(R.id.container, TopFragment())
-            ft.commit()
-        }
-
-
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-//        }
     }
 }
 

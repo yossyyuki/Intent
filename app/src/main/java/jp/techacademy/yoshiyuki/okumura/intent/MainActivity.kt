@@ -28,6 +28,7 @@ open class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        setUpManager()
 
 //        binding.textView.text = "作業時間を計測します"
 
@@ -38,6 +39,15 @@ open class MainActivity : AppCompatActivity() {
         fragmentTransaction.add(R.id.container, fragment)
         fragmentTransaction.commit()
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        RealmManager.release()
+    }
+
+    private fun setUpManager() {
+        RealmManager.setUp()
     }
 }
 

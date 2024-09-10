@@ -24,7 +24,7 @@ import kotlinx.coroutines.*
 
 open class TopFragment : Fragment() {
 
-    private lateinit var realm: Realm
+    //    private lateinit var realm: Realm
     private var _binding: FragmentTopBinding? = null
     private val binding: FragmentTopBinding get() = _binding!!
 
@@ -40,18 +40,18 @@ open class TopFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Realmの設定
-        val config = RealmConfiguration.Builder(schema = setOf(InputData::class))
-            .name("myrealm.realm") // データベースファイル名を指定
-            .build()
-        realm = Realm.open(config)
+//        // Realmの設定
+//        val config = RealmConfiguration.Builder(schema = setOf(InputData::class))
+//            .name("myrealm.realm") // データベースファイル名を指定
+//            .build()
+//        realm = Realm.open(config)
 
         // データの保存　
         binding.ToInputFragment.setOnClickListener {
             val inputnumber = binding.editText.text.toString()
 
             GlobalScope.launch {
-                realm.write {
+                RealmManager.realm?.write {
                     try {
                         /*<Long>を<Int>に変更*/
                         val maxId: RealmScalarNullableQuery<Int> = query<InputData>().max<Int>("id")
@@ -116,9 +116,8 @@ open class TopFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Fragmentのビューが破棄されたときにRealmインスタンスを閉じる
-        realm.close()
+//        // Fragmentのビューが破棄されたときにRealmインスタンスを閉じる
+//        RealmManager.realm?.close()
         _binding = null // ビューの解放
     }
 }
-

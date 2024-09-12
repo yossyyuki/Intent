@@ -24,9 +24,7 @@ open class WorkerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.nextToMeasurementFragment.setOnClickListener {
 
-        }
         binding.nextToMeasurementFragment.setOnClickListener {
             // FragmentManagerの取得
             // トランザクションの生成・コミット

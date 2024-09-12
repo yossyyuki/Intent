@@ -11,7 +11,7 @@ android {
     compileSdk 34
     defaultConfig {
         applicationId "jp.techacademy.yoshiyuki.okumura.intent"
-        minSdk 24
+        minSdk 31
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -41,6 +41,7 @@ android {
 dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4' // 追加
     implementation 'io.realm.kotlin:library-base:1.5.0' // 追加
+    implementation 'com.google.android.material:material:1.8.0' // ChipGroupを使用するため追加
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.12.0'

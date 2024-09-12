@@ -34,6 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="荒磨"
+            app:singleSelection="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/chip2"
@@ -45,6 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="塗装"
+            app:singleSelection="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/chip3"
@@ -56,6 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="組立"
+            app:singleSelection="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/toptext"
@@ -93,6 +96,8 @@
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="155dp"
         tools:layout_editor_absoluteY="9dp" />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -53,7 +53,6 @@ open class TopFragment : Fragment() {
             GlobalScope.launch {
                 RealmManager.realm?.write {
                     try {
-                        /*<Long>を<Int>に変更*/
                         val maxId: RealmScalarNullableQuery<Int> = query<InputData>().max<Int>("id")
                         val nextId = (maxId.find() ?: 0) + 1
                         copyToRealm(InputData().apply {

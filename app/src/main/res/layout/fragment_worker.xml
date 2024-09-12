@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    tools:context=".MainActivity">
+<!--    tools:context=".MainActivity">-->
 
 
     <TextView
@@ -68,5 +68,17 @@
         android:text="戻る"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="213dp"
+        android:layout_height="28dp"
+        android:text="receivedText"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="155dp"
+        tools:layout_editor_absoluteY="9dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ToInputFragment"/>
+    "/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

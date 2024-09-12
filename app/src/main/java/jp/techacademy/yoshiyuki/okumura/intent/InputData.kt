@@ -8,5 +8,8 @@ class InputData : RealmObject {
             /*LongをIntに変更*/
     var id: Int = 0
     var orderNumber: Int = 0
-    var processName: String = ""
+    var processName: String? = ""
+    var checkedIds: String = ""
+
+
 }

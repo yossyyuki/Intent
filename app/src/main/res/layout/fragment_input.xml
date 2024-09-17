@@ -16,53 +16,40 @@
         android:text="工程を選択"
         android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!--    選択されたChipをRealmで保存するためにChipGroupを定義する-->
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/chipGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:singleSelection="true"
-        tools:ignore="MissingConstraints">
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toptext"
+        app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip1"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="荒磨"
-            app:singleSelection="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/chip2"
-            app:layout_constraintVertical_bias="0.11" />
+            android:text="荒磨" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip2"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="塗装"
-            app:singleSelection="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/chip3"
-            app:layout_constraintVertical_bias="0.102" />
+            android:text="塗装" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip3"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="組立"
-            app:singleSelection="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/toptext"
-            app:layout_constraintVertical_bias="0.098" />
+            android:text="組立" />
 
     </com.google.android.material.chip.ChipGroup>
 
@@ -96,8 +83,6 @@
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="155dp"
         tools:layout_editor_absoluteY="9dp" />
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

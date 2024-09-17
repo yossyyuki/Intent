@@ -3,14 +3,10 @@ package jp.techacademy.yoshiyuki.okumura.intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import io.realm.kotlin.RealmConfiguration
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.google.android.material.chip.Chip
-import io.realm.kotlin.ext.query
-import jp.techacademy.yoshiyuki.okumura.intent.RealmManager.realm
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentInputBinding
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -42,6 +38,7 @@ open class InputFragment : Fragment() {
 
         // データの保存　chipをクリックで着火
         binding.chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
+            println(" RealmData ==== *** click")
             // チップが選択されているか確認
             if (checkedIds.isNotEmpty()) {
                 // チェックされたチップIDを取得
@@ -56,41 +53,34 @@ open class InputFragment : Fragment() {
                     GlobalScope.launch {
                         try {
                             RealmManager.realm?.write {
-                                copyToRealm(InputData().apply {
+//                                copyToRealmを削除
+                                (InputData().apply {
                                     processName = process
                                 })
                             }
                             // データが保存されたことをLogcatに出力
                             Log.d("RealmData", "データが保存されました: $process")
-
-
-//
                         } catch (e: Exception) {
                             // エラーハンドリング
                             Log.e("RealmData", "データの保存に失敗しました: ${e.message}")
                         }
-
-
-                        binding.ToWorkerFragment.setOnClickListener {
-                            // FragmentManagerの取得
-                            // トランザクションの生成・コミット　WorkerFragmentを表示
-                            val ft = parentFragmentManager.beginTransaction()
-                            ft.replace(R.id.container, WorkerFragment())
-                            ft.commit()
-                            ft.addToBackStack(null)
-                            binding.toTopFragment.setOnClickListener {
-                                // TopFragmentに戻る
-                                val ft = parentFragmentManager.beginTransaction()
-                                ft.replace(R.id.container, TopFragment())
-                                ft.commit()
-
-
-                            }
-
-                        }
                     }
-
                 }
+            }
+        }
+
+        binding.ToWorkerFragment.setOnClickListener {
+            // FragmentManagerの取得
+            // トランザクションの生成・コミット　WorkerFragmentを表示
+            val ft = parentFragmentManager.beginTransaction()
+            ft.replace(R.id.container, WorkerFragment())
+            ft.commit()
+            ft.addToBackStack(null)
+            binding.toTopFragment.setOnClickListener {
+                // TopFragmentに戻る
+                val ft = parentFragmentManager.beginTransaction()
+                ft.replace(R.id.container, TopFragment())
+                ft.commit()
             }
         }
     }
@@ -100,7 +90,6 @@ open class InputFragment : Fragment() {
 //override fun onDestroyView() {
 //    super.onDestroyView()
 //    _binding = null
-
 
 
 

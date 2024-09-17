@@ -117,6 +117,6 @@ open class TopFragment : Fragment() {
         super.onDestroyView()
 //        // Fragmentのビューが破棄されたときにRealmインスタンスを閉じる
 //        RealmManager.realm?.close()
-        _binding = null // ビューの解放
+//        _binding = null // ビューの解放
     }
 }

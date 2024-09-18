@@ -9,7 +9,7 @@ class InputData : RealmObject {
     var id: Int = 0
     var orderNumber: Int = 0
     var processName: String? = ""
-    var checkedIds: String = ""
+    var workerName: String = ""
 
 
 }

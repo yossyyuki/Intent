@@ -32,7 +32,7 @@ open class InputFragment : Fragment() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Bundleからidデータを取得
+        // Bundleからidデータを取得　?:0でエラー防ぐ
         val inputnumber = arguments?.getInt("id") ?: 0
 
 //        Realmからidに紐づいたorderNumberを取得し表示する
@@ -41,7 +41,8 @@ open class InputFragment : Fragment() {
                 RealmManager.realm?.query<InputData>("id == $inputnumber")?.first()?.find()
             inputData?.let {
                 activity?.runOnUiThread {
-                    binding.textView.text = it.orderNumber.toString() // データを表示
+//                    TODO :textViewを別の名称に変更する:DONE
+                    binding.orderNumberView.text = it.orderNumber.toString() // データを表示
 
                     // 取得したテキストをTextViewに表示
 //        binding.textView.text = inputnumber.toString()
@@ -67,6 +68,24 @@ open class InputFragment : Fragment() {
                                             (InputData().apply {
                                                 processName = process
                                             })
+                                            // Bundleでidデータを渡す
+                                            val bundle = Bundle().apply {
+                                                val nextId = null
+                                                nextId?.let { it1 -> putInt("id", it1.toInt()) }
+                                            }
+                                            //InputFragmentにBundleをセット
+                                            //81行目で使用していたInputFragmentインスタンスをinputFragmentという変数にする
+                                            val workerFragment = WorkerFragment().apply {
+                                                arguments = bundle
+                                            }
+                                            binding.ToWorkerFragment.setOnClickListener {
+                                                // FragmentManagerの取得
+                                                // トランザクションの生成・コミット　WorkerFragmentを表示
+                                                val ft = parentFragmentManager.beginTransaction()
+                                                ft.replace(R.id.container, workerFragment)
+                                                ft.commit()
+                                            }
+
                                         }
                                         // データが保存されたことをLogcatに出力
                                         Log.d("RealmData", "データが保存されました: $process")
@@ -79,20 +98,20 @@ open class InputFragment : Fragment() {
                         }
                     }
 
-                    binding.ToWorkerFragment.setOnClickListener {
-                        // FragmentManagerの取得
-                        // トランザクションの生成・コミット　WorkerFragmentを表示
-                        val ft = parentFragmentManager.beginTransaction()
-                        ft.replace(R.id.container, WorkerFragment())
-                        ft.commit()
-                        ft.addToBackStack(null)
-                        binding.toTopFragment.setOnClickListener {
-                            // TopFragmentに戻る
-                            val ft = parentFragmentManager.beginTransaction()
-                            ft.replace(R.id.container, TopFragment())
-                            ft.commit()
-                        }
-                    }
+//                    binding.ToWorkerFragment.setOnClickListener {
+//                        // FragmentManagerの取得
+//                        // トランザクションの生成・コミット　WorkerFragmentを表示
+//                        val ft = parentFragmentManager.beginTransaction()
+//                        ft.replace(R.id.container, workerFragment)
+//                        ft.commit()
+//                        ft.addToBackStack(null)
+//                        binding.toTopFragment.setOnClickListener {
+//                            // TopFragmentに戻る
+//                            val ft = parentFragmentManager.beginTransaction()
+//                            ft.replace(R.id.container, TopFragment())
+//                            ft.commit()
+//                        }
+//                    }
                 }
             }
         }

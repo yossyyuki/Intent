@@ -74,7 +74,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/orderNumberView"
         android:layout_width="213dp"
         android:layout_height="28dp"
         android:text="receivedText"

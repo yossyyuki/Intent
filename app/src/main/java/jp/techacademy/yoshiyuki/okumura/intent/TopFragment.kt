@@ -59,9 +59,9 @@ open class TopFragment : Fragment() {
                             id = nextId.toInt()
                             orderNumber = inputnumber.toInt()
                         })
-                        // Bundleでデータを渡す
+                        // Bundleでidデータを渡す
                         val bundle = Bundle().apply {
-                            putInt("TEXT_KEY", inputnumber.toInt())
+                            putInt("id", nextId.toInt())
                         }
                         //InputFragmentにBundleをセット
                         //81行目で使用していたInputFragmentインスタンスをinputFragmentという変数にする

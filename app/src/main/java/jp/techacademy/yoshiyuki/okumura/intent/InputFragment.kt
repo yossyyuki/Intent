@@ -32,10 +32,13 @@ open class InputFragment : Fragment() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Bundleからデータを取得
-        val inputnumber = arguments?.getInt("TEXT_KEY") ?:0
+        // Bundleからidデータを取得
+        val inputnumber = arguments?.getInt("id") ?: 0
+
+//        Realmからidに紐づいたorderNumberを取得し表示する
         GlobalScope.launch {
-            val inputData = RealmManager.realm?.query<InputData>("TEXT_KEY == $inputnumber")?.first()?.find()
+            val inputData =
+                RealmManager.realm?.query<InputData>("id == $inputnumber")?.first()?.find()
             inputData?.let {
                 activity?.runOnUiThread {
                     binding.textView.text = it.orderNumber.toString() // データを表示

@@ -14,6 +14,8 @@ import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentWorkerBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+
+
 open class WorkerFragment : Fragment() {
 
     private var _binding: FragmentWorkerBinding? = null
@@ -30,22 +32,26 @@ open class WorkerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Bundleからidデータを取得　?:0でエラー防ぐ
+        val process = arguments?.getString("id") ?: 0
+
         // Realmからデータを取得
         GlobalScope.launch {
             try {
                 // Realmからデータを取得（例として id=1 のデータを取得）
-                val inputData = RealmManager.realm?.query<InputData>("id == $id")?.first()?.find()
-
-                // データが存在する場合はTextViewに表示
+                val inputData =
+                    RealmManager.realm?.query<InputData>("id == $process")?.first()?.find()
+//
+//                // データが存在する場合はTextViewに表示
                 inputData?.let {
-                    // processNameを表示
+//                    // processNameを表示
                     activity?.runOnUiThread {
-                        binding.textView.text = it.processName.toString()
+                        binding.processView.text = it.processName.toString()
                     }
                 } ?: run {
-                    // データが存在しない場合の処理
+//                    // データが存在しない場合の処理
                     activity?.runOnUiThread {
-                        binding.textView.text = "データが存在しません"
+                        binding.processView.text = "データが存在しません"
                     }
                 }
             } catch (e: Exception) {
@@ -105,10 +111,11 @@ open class WorkerFragment : Fragment() {
         }
 
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }
+
+//override fun onDestroyView() {
+//    super.onDestroyView()
+//    _binding = null
+//}
+//}
 

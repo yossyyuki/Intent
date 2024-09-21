@@ -4,11 +4,14 @@ package jp.techacademy.yoshiyuki.okumura.intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentMeasurementBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 open class MeasurementFragment : Fragment() {
 
@@ -26,19 +29,22 @@ open class MeasurementFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.button.setOnClickListener {
+
+//            次に渡す画面がないのでコメントアウト
             // FragmentManagerの取得
             // トランザクションの生成・コミット
-            val ft = parentFragmentManager.beginTransaction()
-            ft.replace(R.id.container, MeasurementFragment())
-            ft.commit()
-            ft.addToBackStack(null)
+//            val ft = parentFragmentManager.beginTransaction()
+//            ft.replace(R.id.container, MeasurementFragment())
+//            ft.commit()
+//            ft.addToBackStack(null)
         }
-        binding.ToWorkerFragment.setOnClickListener {
-            // WorkerFragmentに戻る
-            val ft = parentFragmentManager.beginTransaction()
-            ft.replace(R.id.container, WorkerFragment())
-            ft.commit()
-        }
+//        「戻る」を動作を制限するためにコメントアウト
+//        binding.ToWorkerFragment.setOnClickListener {
+//            // WorkerFragmentに戻る
+//            val ft = parentFragmentManager.beginTransaction()
+//            ft.replace(R.id.container, WorkerFragment())
+//            ft.commit()
+//        }
         //ストップウォッチ用のコード
 
         val handler = Handler()                      //
@@ -62,6 +68,15 @@ open class MeasurementFragment : Fragment() {
 //
 //                // startボタン押された時(setOnClickListener)の処理
         binding.start.setOnClickListener {
+            val currentTime = System.currentTimeMillis() // 現在の時間（ミリ秒）を取得
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) // フォーマットを指定
+            val dateString = dateFormat.format(Date(currentTime)) // 現在の時間をフォーマット
+
+            // Logcat に記録
+            Log.d("MeasurementFragment", "Start button pressed at: $dateString")
+
+
+
             handler.post(runnable)                // 最初のキュー登録
         }
         // stopボタン押された時の処理
@@ -69,13 +84,13 @@ open class MeasurementFragment : Fragment() {
             handler.removeCallbacks(runnable)      // キューキャンセル
         }
 //                // resetボタン押された時の処理
-        binding.reset.setOnClickListener {
-            handler.removeCallbacks(runnable)      // キューキャンセル
-            timeValue = 0                          // 秒カウンタークリア
-            timeToText()?.let {                  // timeToText()で表示データを作り
-                binding.timeText.text = it                // timeText.textに表示
-            }
-        }
+//        binding.reset.setOnClickListener {
+//            handler.removeCallbacks(runnable)      // キューキャンセル
+//            timeValue = 0                          // 秒カウンタークリア
+//            timeToText()?.let {                  // timeToText()で表示データを作り
+//                binding.timeText.text = it                // timeText.textに表示
+//            }
+//        }
 //        }
 
     }

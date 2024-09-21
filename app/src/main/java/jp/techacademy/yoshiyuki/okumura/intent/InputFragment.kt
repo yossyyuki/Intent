@@ -12,6 +12,7 @@ import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentInputBinding
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import io.realm.kotlin.Realm
 
 
 open class InputFragment : Fragment() {
@@ -67,26 +68,28 @@ open class InputFragment : Fragment() {
 //                                copyToRealmを削除
                                             (InputData().apply {
                                                 processName = process
+
                                             })
                                             // Bundleでidデータを渡す
-                                            val bundle = Bundle().apply {
-                                                val nextId = null
-                                                nextId?.let { it1 -> putInt("id", it1.toInt()) }
-                                            }
-                                            //InputFragmentにBundleをセット
-                                            //81行目で使用していたInputFragmentインスタンスをinputFragmentという変数にする
-                                            val workerFragment = WorkerFragment().apply {
-                                                arguments = bundle
-                                            }
-                                            binding.ToWorkerFragment.setOnClickListener {
-                                                // FragmentManagerの取得
-                                                // トランザクションの生成・コミット　WorkerFragmentを表示
-                                                val ft = parentFragmentManager.beginTransaction()
-                                                ft.replace(R.id.container, workerFragment)
-                                                ft.commit()
-                                            }
+//                                            val bundle = Bundle().apply {
+//                                                putInt("id", process.toInt())
+                                        }
+//                                            //InputFragmentにBundleをセット
+//                                            //WokerFragmentインスタンスをworkerFragmentという変数にする
+//                                            val workerFragment = WorkerFragment().apply {
+//                                                arguments = bundle
+//                                            }
+                                        binding.ToWorkerFragment.setOnClickListener {
+                                            // FragmentManagerの取得
+                                            // トランザクションの生成・コミット　WorkerFragmentを表示
+                                            val ft = parentFragmentManager.beginTransaction()
+                                            ft.replace(R.id.container, WorkerFragment())
+                                            ft.commit()
+                                            ft.addToBackStack(null)
 
                                         }
+
+
                                         // データが保存されたことをLogcatに出力
                                         Log.d("RealmData", "データが保存されました: $process")
                                     } catch (e: Exception) {
@@ -105,13 +108,14 @@ open class InputFragment : Fragment() {
 //                        ft.replace(R.id.container, workerFragment)
 //                        ft.commit()
 //                        ft.addToBackStack(null)
-//                        binding.toTopFragment.setOnClickListener {
-//                            // TopFragmentに戻る
-//                            val ft = parentFragmentManager.beginTransaction()
-//                            ft.replace(R.id.container, TopFragment())
-//                            ft.commit()
+                    binding.toTopFragment.setOnClickListener {
+                        // TopFragmentに戻る
+                        val ft = parentFragmentManager.beginTransaction()
+                        ft.replace(R.id.container, TopFragment())
+                        ft.commit()
 //                        }
 //                    }
+                    }
                 }
             }
         }

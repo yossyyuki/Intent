@@ -48,7 +48,7 @@ open class TopFragment : Fragment() {
 
         // データの保存　
         binding.ToInputFragment.setOnClickListener {
-            val inputnumber = binding.editText.text.toString()
+            val ordernumber = binding.editText.text.toString()
 
             GlobalScope.launch {
                 RealmManager.realm?.write {
@@ -57,7 +57,7 @@ open class TopFragment : Fragment() {
                         val nextId = (maxId.find() ?: 0) + 1
                         copyToRealm(InputData().apply {
                             id = nextId.toInt()
-                            orderNumber = inputnumber.toInt()
+                            orderNumber = ordernumber.toInt()
                         })
                         // Bundleでidデータを渡す
                         val bundle = Bundle().apply {

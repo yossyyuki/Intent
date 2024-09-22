@@ -10,6 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentMeasurementBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -69,11 +71,30 @@ open class MeasurementFragment : Fragment() {
 //                // startボタン押された時(setOnClickListener)の処理
         binding.start.setOnClickListener {
             val currentTime = System.currentTimeMillis() // 現在の時間（ミリ秒）を取得
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) // フォーマットを指定
+            val dateFormat =
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) // フォーマットを指定
             val dateString = dateFormat.format(Date(currentTime)) // 現在の時間をフォーマット
 
             // Logcat に記録
-            Log.d("MeasurementFragment", "Start button pressed at: $dateString")
+            Log.d("RealmData", "Start button pressed at: $dateString")
+
+            // Realmへの保存処理
+            val startdate = dateString
+
+            GlobalScope.launch {
+                try {
+                    RealmManager.realm?.write {
+                        (InputData().apply {
+                            startDate = startdate
+                        })
+                    }
+                    // データが保存されたことをLogcatに出力
+                    Log.d("RealmData", "データが保存されました: $startdate")
+                } catch (e: Exception) {
+                    // エラーハンドリング
+                    Log.e("RealmData", "データの保存に失敗しました: ${e.message}")
+                }
+            }
 
 
 
@@ -81,6 +102,33 @@ open class MeasurementFragment : Fragment() {
         }
         // stopボタン押された時の処理
         binding.stop.setOnClickListener {
+            val currentTime = System.currentTimeMillis() // 現在の時間（ミリ秒）を取得
+            val dateFormat =
+                SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()) // フォーマットを指定
+            val dateString = dateFormat.format(Date(currentTime)) // 現在の時間をフォーマット
+
+            // Logcat に記録
+            Log.d("RealmData", "Stop button pressed at: $dateString")
+
+            // Realmへの保存処理
+            val stopdate = dateString
+            GlobalScope.launch {
+                try {
+                    RealmManager.realm?.write {
+                        (InputData().apply {
+                            startDate = stopdate
+                        })
+                    }
+                    // データが保存されたことをLogcatに出力
+                    Log.d("RealmData", "データが保存されました: $stopdate")
+                } catch (e: Exception) {
+                    // エラーハンドリング
+                    Log.e("RealmData", "データの保存に失敗しました: ${e.message}")
+                }
+            }
+
+
+
             handler.removeCallbacks(runnable)      // キューキャンセル
         }
 //                // resetボタン押された時の処理

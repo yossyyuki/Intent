@@ -11,8 +11,8 @@ class InputData : RealmObject {
     var orderNumber: Int = 0
     var processName: String? = ""
     var workerName: String = ""
-    var startDate: Date = Date()
-    var endDate: Date? = null // ストップを押すまでnull
+    var startDate: String = ""
+    var stopDate: String? = null // ストップを押すまでnull
 //    TODO:カラムの追加　計測時間　秒数？　開始時間と終了時間の2つをつくる方法もあり
 //    TODO:InputdataをCSVにして吐き出す？それをggcloudに送るなど。商用利用について確認は必要。
 

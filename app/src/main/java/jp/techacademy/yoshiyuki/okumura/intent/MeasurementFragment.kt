@@ -1,17 +1,13 @@
 package jp.techacademy.yoshiyuki.okumura.intent
 
-//import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import jp.techacademy.yoshiyuki.okumura.intent.databinding.FragmentMeasurementBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 import android.os.Environment
@@ -27,6 +23,9 @@ open class MeasurementFragment : Fragment() {
     private var _binding: FragmentMeasurementBinding? = null
     private val binding: FragmentMeasurementBinding get() = _binding!!
 
+    private var timeValue = 0 // timeValueはタイマーの時間を保持する変数
+    private var job: Job? = null // CoroutineのJobを保持　コルーチンは非同期に処理が可能
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,28 +37,15 @@ open class MeasurementFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ボタンを押したときにCSVエクスポートを実行
-        binding.button.setOnClickListener {
+        // CSVエクスポートを実行
+        binding.sendresultbutton.setOnClickListener {
             RealmManager.realm?.let { realm ->
                 exportRealmDataToCSV(realm)
-                Log.d("RealmData", "button pressed at:sssss")
+                Log.d("RealmData", "button pressed at:success")
             }
         }
 
-        // ストップウォッチの処理はそのまま（省略可能）
-        val handler = Handler()
-        var timeValue = 0
-        val runnable = object : Runnable {
-            override fun run() {
-                timeValue++
-                timeToText(timeValue)?.let {
-                    binding.timeText.text = it
-                }
-                handler.postDelayed(this, 1000)
-            }
-        }
-
-        // スタートボタン
+        // スタートボタンクリック時の日時取得
         binding.start.setOnClickListener {
             val currentTime = System.currentTimeMillis()
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -71,7 +57,7 @@ open class MeasurementFragment : Fragment() {
                 try {
                     RealmManager.realm?.write {
                         (InputData().apply {
-                            startDate = Date(currentTime).toString() // Date型で保存
+                            startDate = Date(currentTime).toString() // Date型をStringに変換して保存
                         })
                     }
                     Log.d("RealmData", "データが保存されました: $dateString")
@@ -79,10 +65,25 @@ open class MeasurementFragment : Fragment() {
                     Log.e("RealmData", "データの保存に失敗しました: ${e.message}")
                 }
             }
-            handler.post(runnable)
+            binding.start.isEnabled = false // 一度Startボタンを押したらStart機能を無効にする
+            //TODO:入力を間違えた際に戻れないのがネック。対応必要かも
+
+
+            // Coroutineでタイマー開始
+            job = GlobalScope.launch(Dispatchers.Main) {
+                while (isActive) {
+//                    タイマーの経過時間を管理　1秒ごとにtimeValueが1増える
+                    timeValue++
+//                    timeValueの時間を時：分：秒の形式に変換し、timeTextに表示する
+                    timeToText(timeValue)?.let {
+                        binding.timeText.text = it
+                    }
+                    delay(1000) // 1秒ごとに更新
+                }
+            }
         }
 
-        // ストップボタン
+        // ストップボタンクリック時の日時取得
         binding.stop.setOnClickListener {
             val currentTime = System.currentTimeMillis()
             val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
@@ -94,7 +95,7 @@ open class MeasurementFragment : Fragment() {
                 try {
                     RealmManager.realm?.write {
                         (InputData().apply {
-                            stopDate = Date(currentTime).toString() // Date型で保存
+                            stopDate = Date(currentTime).toString() // Date型をStringに変換して保存
                         })
                     }
                     Log.d("RealmData", "データが保存されました: $dateString")
@@ -102,12 +103,18 @@ open class MeasurementFragment : Fragment() {
                     Log.e("RealmData", "データの保存に失敗しました: ${e.message}")
                 }
             }
-            handler.removeCallbacks(runnable)
+            binding.stop.isClickable = false // 一度stopボタンを押したらStop機能を無効にする
+            //TODO:入力を間違えた際に戻れないのがネック。対応必要かも。別の方法を検討。
+
+
+            // Coroutineを停止
+            job?.cancel()
         }
     }
 
-    // CSVエクスポート関数
+    // CSVをエクスポートする関数
     private fun exportRealmDataToCSV(realm: Realm) {
+//        InputDataに入ってる全てのデータを対象にする
         val dataList = realm.query<InputData>().find()
         val directory =
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
@@ -115,9 +122,12 @@ open class MeasurementFragment : Fragment() {
 
         try {
             val fileWriter = FileWriter(csvFile)
-            fileWriter.append("ID,OrderNumber,ProcessName,WorkerName,StartDate,EndDate\n")
+//            CSVの列のタイトルを記入する。ヘッダー行
+            fileWriter.append("ID,OrderNumber,ProcessName,WorkerName,StartDate,StopDate\n")
+//            \nで行ごとにデータを区切る
 
             dataList.forEach { data ->
+//                格データ自体をCSVに書き込んでいく
                 fileWriter.append("${data.id},")
                 fileWriter.append("${data.orderNumber},")
                 fileWriter.append("${data.processName ?: ""},")
@@ -126,10 +136,13 @@ open class MeasurementFragment : Fragment() {
                 fileWriter.append("${data.stopDate ?: "null"}\n")
             }
 
+//            バッファにあるデータを強制的に書き込む
             fileWriter.flush()
+//            ファイルを閉じる
             fileWriter.close()
 
             Log.d("CSV Export", "CSV file successfully exported to: ${csvFile.absolutePath}")
+//            IOException=入出力処理中の例外を管理するクラス
         } catch (e: IOException) {
             Log.e("CSV Export", "Error while writing to CSV", e)
         }

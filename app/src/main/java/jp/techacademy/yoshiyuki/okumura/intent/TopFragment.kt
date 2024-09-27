@@ -59,7 +59,8 @@ open class TopFragment : Fragment() {
                             id = nextId.toInt()
                             orderNumber = ordernumber.toInt()
                         })
-                        // Bundleでidデータを渡す
+                        // Bundleでidデータを渡す　idというキーでnextIDを保存　
+                        //TODO: 下のidはInputDataのidとは別物か確認
                         val bundle = Bundle().apply {
                             putInt("id", nextId.toInt())
                         }

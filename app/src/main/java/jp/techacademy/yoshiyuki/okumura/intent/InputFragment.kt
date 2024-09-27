@@ -33,20 +33,19 @@ open class InputFragment : Fragment() {
     @OptIn(DelicateCoroutinesApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Bundleからidデータを取得　?:0でエラー防ぐ
-        val inputnumber = arguments?.getInt("id") ?: 0
+        // Bundleからidデータを取得　?:0でエラー防ぐ oedernumberがわかりにくいのでIDに変更した
+//
+//
+        val ID = arguments?.getInt("id") ?: 0
 
 //        Realmからidに紐づいたorderNumberを取得し表示する
         GlobalScope.launch {
             val inputData =
-                RealmManager.realm?.query<InputData>("id == $inputnumber")?.first()?.find()
+                RealmManager.realm?.query<InputData>("id == $ID")?.first()?.find()
             inputData?.let {
                 activity?.runOnUiThread {
-//                    TODO :textViewを別の名称に変更する:DONE
                     binding.orderNumberView.text = it.orderNumber.toString() // データを表示
 
-                    // 取得したテキストをTextViewに表示
-//        binding.textView.text = inputnumber.toString()
 
                     // データの保存　chipをクリックで着火
                     binding.chipGroup.setOnCheckedStateChangeListener { group, checkedIds ->
@@ -60,75 +59,78 @@ open class InputFragment : Fragment() {
                             // Realmに保存する
                             selectedChip?.let {
                                 val process = it.text.toString()
-
                                 // Realmへの保存処理
                                 GlobalScope.launch {
                                     try {
+                                        // Realmの書き込みトランザクションを開始
                                         RealmManager.realm?.write {
-//                                copyToRealmを削除
-                                            (InputData().apply {
-                                                processName = process
+                                            // プライマリーキーのidを使って書き込み対象レコード取得
+                                            val inputDataRecord =
+                                                query<InputData>("id == $0", ID).first()
+                                                    .find()
+//                                            ↑idがordernumberと一致する最初のInputDataを取得
 
-                                            })
-                                            // Bundleでidデータを渡す
-//                                            val bundle = Bundle().apply {
-//                                                putInt("id", process.toInt())
+                                            inputDataRecord.also { data ->
+                                                // データが存在する場合は、processNameを上書きする
+                                                if (data != null) {
+                                                    data.processName = process
+                                                }
+
+                                            }
+
+                                            // データが保存されたことをLogcatに出力
+                                            Log.d("RealmData", "データが保存されました: $process")
+                                            Log.d(
+                                                "RealmData",
+                                                "Realmデータ確認: id（$ID）のprocessNameは、${inputDataRecord?.processName} です"
+                                            )
                                         }
-//                                            //InputFragmentにBundleをセット
-//                                            //WokerFragmentインスタンスをworkerFragmentという変数にする
-//                                            val workerFragment = WorkerFragment().apply {
-//                                                arguments = bundle
-//                                            }
-                                        binding.ToWorkerFragment.setOnClickListener {
-                                            // FragmentManagerの取得
-                                            // トランザクションの生成・コミット　WorkerFragmentを表示
-                                            val ft = parentFragmentManager.beginTransaction()
-                                            ft.replace(R.id.container, WorkerFragment())
-                                            ft.commit()
-                                            ft.addToBackStack(null)
-
-                                        }
-
-
-                                        // データが保存されたことをLogcatに出力
-                                        Log.d("RealmData", "データが保存されました: $process")
                                     } catch (e: Exception) {
                                         // エラーハンドリング
-                                        Log.e("RealmData", "データの保存に失敗しました: ${e.message}")
+                                        Log.e(
+                                            "RealmData",
+                                            "データの保存に失敗しました: ${e.message}"
+                                        )
                                     }
                                 }
                             }
                         }
                     }
-
-//                    binding.ToWorkerFragment.setOnClickListener {
-//                        // FragmentManagerの取得
-//                        // トランザクションの生成・コミット　WorkerFragmentを表示
-//                        val ft = parentFragmentManager.beginTransaction()
-//                        ft.replace(R.id.container, workerFragment)
-//                        ft.commit()
-//                        ft.addToBackStack(null)
-                    binding.toTopFragment.setOnClickListener {
-                        // TopFragmentに戻る
-                        val ft = parentFragmentManager.beginTransaction()
-                        ft.replace(R.id.container, TopFragment())
-                        ft.commit()
-//                        }
-//                    }
-                    }
                 }
             }
         }
+
+        // TopFragmentに戻る
+        binding.toTopFragment.setOnClickListener {
+            val ft = parentFragmentManager.beginTransaction()
+            ft.replace(R.id.container, TopFragment())
+            ft.commit()
+
+        }
+
+
+        // WorkerFragmentを表示
+        binding.ToWorkerFragment.setOnClickListener {
+            // 渡すデータをBundleにセット
+            val bundle = Bundle().apply {
+                putInt("id", ID) // IDはデータベースのプライマリーキーのidの値。それをidというキーに保存
+            }
+            // WorkerFragmentを作成し、Bundleを渡す
+            val workerFragment = WorkerFragment().apply {
+                arguments = bundle
+            }
+
+            // FragmentManagerの取得
+            val ft = parentFragmentManager.beginTransaction()
+            ft.replace(R.id.container, workerFragment)
+            ft.commit()
+            ft.addToBackStack(null)
+
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
-
-
-//override fun onDestroyView() {
-//    super.onDestroyView()
-//    _binding = null
-
-
-
-
-
-

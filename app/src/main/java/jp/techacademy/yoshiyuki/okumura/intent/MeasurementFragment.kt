@@ -68,7 +68,6 @@ open class MeasurementFragment : Fragment() {
             binding.start.isEnabled = false // 一度Startボタンを押したらStart機能を無効にする
             //TODO:入力を間違えた際に戻れないのがネック。対応必要かも
 
-
             // Coroutineでタイマー開始
             job = GlobalScope.launch(Dispatchers.Main) {
                 while (isActive) {
@@ -127,7 +126,7 @@ open class MeasurementFragment : Fragment() {
 //            \nで行ごとにデータを区切る
 
             dataList.forEach { data ->
-//                格データ自体をCSVに書き込んでいく
+//                各データ自体をCSVに書き込んでいく
                 fileWriter.append("${data.id},")
                 fileWriter.append("${data.orderNumber},")
                 fileWriter.append("${data.processName ?: ""},")

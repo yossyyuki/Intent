@@ -134,3 +134,5 @@ open class InputFragment : Fragment() {
         _binding = null
     }
 }
+
+}

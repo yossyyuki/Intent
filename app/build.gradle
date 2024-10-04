@@ -19,6 +19,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildFeatures {
             viewBinding true
+
         }
 
     }
@@ -36,7 +37,16 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+//    Gradleに対して重複したファイルを無視するように指示
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+    }
 }
+
 
 dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4' // 追加
@@ -49,6 +59,18 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+//Google Drive API用の依存関係を追加
+    implementation 'com.google.api-client:google-api-client-android:1.33.0'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev136-1.25.0'
+    implementation 'com.google.api-client:google-api-client-gson:1.33.0'
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.33.0'
+
+    // HTTPとJSONの処理用ライブラリ
+    implementation 'com.google.http-client:google-http-client-android:1.41.5'
+    implementation 'com.google.http-client:google-http-client-gson:1.41.5'
+
+
 }
+
 
 

@@ -35,7 +35,6 @@ open class InputFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // Bundleからidデータを取得　?:0でエラー防ぐ oedernumberがわかりにくいのでIDに変更した
 //
-//
         val ID = arguments?.getInt("id") ?: 0
 
 //        Realmからidに紐づいたorderNumberを取得し表示する
@@ -135,4 +134,3 @@ open class InputFragment : Fragment() {
     }
 }
 
-}

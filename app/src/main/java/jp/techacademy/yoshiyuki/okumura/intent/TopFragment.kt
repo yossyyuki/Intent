@@ -53,6 +53,9 @@ open class TopFragment : Fragment() {
             GlobalScope.launch {
                 RealmManager.realm?.write {
                     try {
+//                        TODO:下記コードの意味復習
+//                        InputDAtaクラスに保存されているなかで最大のidを取り出す
+//                        型を明示している
                         val maxId: RealmScalarNullableQuery<Int> = query<InputData>().max<Int>("id")
                         val nextId = (maxId.find() ?: 0) + 1
                         copyToRealm(InputData().apply {
@@ -60,14 +63,17 @@ open class TopFragment : Fragment() {
                             orderNumber = ordernumber.toInt()
                         })
                         // Bundleでidデータを渡す　idというキーでnextIDを保存　
-                        //TODO: 下のidはInputDataのidとは別物か確認
+                        //TODO: 下のidはInputDataのidとは別物か確認:別物
+//                        Bundleはkeyとvalueの引数を保有する。
+//                        渡す画面のインスタンスをまず作成する。
                         val bundle = Bundle().apply {
                             putInt("id", nextId.toInt())
                         }
                         //InputFragmentにBundleをセット
                         //81行目で使用していたInputFragmentインスタンスをinputFragmentという変数にする
-                        val inputFragment = InputFragment().apply {
-                            arguments = bundle
+//                        applyはわかりにくいのでalsoに変更。ここのargumentsはInputFragmentのargumentsのこと
+                        val inputFragment = InputFragment().also {
+                            it.arguments = bundle
                         }
 
                         val orderNumber =

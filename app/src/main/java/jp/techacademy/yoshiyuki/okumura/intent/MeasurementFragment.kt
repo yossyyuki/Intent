@@ -11,12 +11,20 @@ import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 import android.os.Environment
+import com.google.api.client.auth.oauth2.Credential
+import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets
+import com.google.api.client.http.FileContent
+import com.google.api.client.json.gson.GsonFactory
+import com.google.api.services.drive.Drive
+import com.google.api.services.drive.DriveScopes
 import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-import java.util.Locale
+import java.io.InputStreamReader
 
 open class MeasurementFragment : Fragment() {
 
@@ -24,7 +32,9 @@ open class MeasurementFragment : Fragment() {
     private val binding: FragmentMeasurementBinding get() = _binding!!
 
     private var timeValue = 0 // timeValueはタイマーの時間を保持する変数
-    private var job: Job? = null // CoroutineのJobを保持　コルーチンは非同期に処理が可能
+    private var job: Job? = null // CoroutineのJobを保持
+
+    private lateinit var driveService: Drive
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +50,12 @@ open class MeasurementFragment : Fragment() {
         // CSVエクスポートを実行
         binding.sendresultbutton.setOnClickListener {
             RealmManager.realm?.let { realm ->
-                exportRealmDataToCSV(realm)
+                val csvFile = exportRealmDataToCSV(realm) // CSVファイルをエクスポートして、ファイルオブジェクトを取得
+                if (csvFile != null) {
+                    uploadFileToGoogleDrive(csvFile) // CSVファイルが存在する場合にGoogle Driveにアップロード
+                } else {
+                    Log.e("CSV Export", "CSV file creation failed.")
+                }
                 Log.d("RealmData", "button pressed at:success")
             }
         }
@@ -66,14 +81,11 @@ open class MeasurementFragment : Fragment() {
                 }
             }
             binding.start.isEnabled = false // 一度Startボタンを押したらStart機能を無効にする
-            //TODO:入力を間違えた際に戻れないのがネック。対応必要かも
 
             // Coroutineでタイマー開始
             job = GlobalScope.launch(Dispatchers.Main) {
                 while (isActive) {
-//                    タイマーの経過時間を管理　1秒ごとにtimeValueが1増える
                     timeValue++
-//                    timeValueの時間を時：分：秒の形式に変換し、timeTextに表示する
                     timeToText(timeValue)?.let {
                         binding.timeText.text = it
                     }
@@ -103,47 +115,70 @@ open class MeasurementFragment : Fragment() {
                 }
             }
             binding.stop.isClickable = false // 一度stopボタンを押したらStop機能を無効にする
-            //TODO:入力を間違えた際に戻れないのがネック。対応必要かも。別の方法を検討。
-
 
             // Coroutineを停止
             job?.cancel()
         }
     }
 
-    // CSVをエクスポートする関数
-    private fun exportRealmDataToCSV(realm: Realm) {
-//        InputDataに入ってる全てのデータを対象にする
-        val dataList = realm.query<InputData>().find()
+    // Google Driveにファイルをアップロードする関数
+    private fun uploadFileToGoogleDrive(csvFile: File) {
+        // OAuth 2.0 認証の設定
+        val googleCredentialsJson =
+            requireContext().assets.open("client_secret_537547056657-4dftgq51l3dhqe3o42v4s464m7rp5t2b.apps.googleusercontent.com.json")
+        val clientSecrets = GoogleClientSecrets.load(
+            GsonFactory.getDefaultInstance(),
+            InputStreamReader(googleCredentialsJson)
+        )
+
+        val flow = GoogleAuthorizationCodeFlow.Builder(
+            AndroidHttp.newCompatibleTransport(),
+            GsonFactory.getDefaultInstance(),
+            clientSecrets,
+            Collections.singleton(DriveScopes.DRIVE_FILE)
+        ).setAccessType("offline").build()
+
+        val credential: Credential = flow.loadCredential("user")
+
+        // Drive APIのインスタンスを作成
+        driveService = Drive.Builder(
+            AndroidHttp.newCompatibleTransport(),
+            GsonFactory.getDefaultInstance(),
+            credential
+        ).setApplicationName("Drive API Kotlin App").build()
+
+        // ファイルメタデータの作成
+        val fileMetadata = com.google.api.services.drive.model.File()
+        fileMetadata.name = csvFile.name
+
+        // ファイルのアップロード
+        val mediaContent = FileContent("text/csv", csvFile)
+        val uploadedFile = driveService.files().create(fileMetadata, mediaContent)
+            .setFields("id")
+            .execute()
+
+        Log.d("Drive API", "File uploaded successfully: ${uploadedFile.id}")
+    }
+
+    // 修正済みのCSVエクスポート関数
+    private fun exportRealmDataToCSV(realm: Realm): File? { // Fileを返すように修正
         val directory =
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) // アプリ専用の外部ストレージ
         val csvFile = File(directory, "realm_data.csv")
 
-        try {
+        return try {
             val fileWriter = FileWriter(csvFile)
-//            CSVの列のタイトルを記入する。ヘッダー行
             fileWriter.append("ID,OrderNumber,ProcessName,WorkerName,StartDate,StopDate\n")
-//            \nで行ごとにデータを区切る
-
-            dataList.forEach { data ->
-//                各データ自体をCSVに書き込んでいく
-                fileWriter.append("${data.id},")
-                fileWriter.append("${data.orderNumber},")
-                fileWriter.append("${data.processName ?: ""},")
-                fileWriter.append("${data.workerName},")
-                fileWriter.append("${data.startDate},")
-                fileWriter.append("${data.stopDate ?: "null"}\n")
+            realm.query<InputData>().find().forEach { data ->
+                fileWriter.append("${data.id},${data.orderNumber},${data.processName ?: ""},${data.workerName},${data.startDate},${data.stopDate ?: "null"}\n")
             }
-
-//            バッファにあるデータを強制的に書き込む
             fileWriter.flush()
-//            ファイルを閉じる
             fileWriter.close()
-
             Log.d("CSV Export", "CSV file successfully exported to: ${csvFile.absolutePath}")
-//            IOException=入出力処理中の例外を管理するクラス
+            csvFile // 成功した場合はcsvFileを返す
         } catch (e: IOException) {
             Log.e("CSV Export", "Error while writing to CSV", e)
+            null // 失敗した場合はnullを返す
         }
     }
 

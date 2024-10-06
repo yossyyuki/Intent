@@ -1,5 +1,6 @@
 package jp.techacademy.yoshiyuki.okumura.intent
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,8 @@ import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 import android.os.Environment
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RestrictTo
 import com.google.api.client.auth.oauth2.Credential
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow
@@ -25,6 +28,8 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.io.InputStreamReader
+import com.google.api.client.http.javanet.NetHttpTransport
+
 
 open class MeasurementFragment : Fragment() {
 
@@ -35,6 +40,29 @@ open class MeasurementFragment : Fragment() {
     private var job: Job? = null // CoroutineのJobを保持
 
     private lateinit var driveService: Drive
+
+    /*googleへのサインインとDriveを操作するための変数を定義*/
+//    private var googleSigninClient: GoogleSigninClient? = null
+    private var drive: Drive? = null
+
+//    private val driveContent =
+//        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+//            if (it.resultCode == Activity.RESULT_OK && it.data != null) {
+//                // ログイン成功
+//                connectDrive(it.data!!)
+//            } else {
+//                // ログイン失敗orキャンセル
+//            }
+//        }
+//    private fun loginToGoogle() {
+//        val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestScopes(RestrictTo.Scope(DriveScopes.DRIVE_FILE))
+//            .requestEmail()
+//            .build()
+//        googleSignInClient = GoogleSignIn.getClient(activity, googleSignInOptions)
+//        val intent = googleSignInClient.signInIntent
+//        driveContent.launch(intent)
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,13 +77,10 @@ open class MeasurementFragment : Fragment() {
 
         // CSVエクスポートを実行
         binding.sendresultbutton.setOnClickListener {
+
             RealmManager.realm?.let { realm ->
                 val csvFile = exportRealmDataToCSV(realm) // CSVファイルをエクスポートして、ファイルオブジェクトを取得
-                if (csvFile != null) {
-                    uploadFileToGoogleDrive(csvFile) // CSVファイルが存在する場合にGoogle Driveにアップロード
-                } else {
-                    Log.e("CSV Export", "CSV file creation failed.")
-                }
+                csvFile
                 Log.d("RealmData", "button pressed at:success")
             }
         }
@@ -85,6 +110,7 @@ open class MeasurementFragment : Fragment() {
             // Coroutineでタイマー開始
             job = GlobalScope.launch(Dispatchers.Main) {
                 while (isActive) {
+//                    TODO:++の意味は？
                     timeValue++
                     timeToText(timeValue)?.let {
                         binding.timeText.text = it
@@ -121,50 +147,13 @@ open class MeasurementFragment : Fragment() {
         }
     }
 
-    // Google Driveにファイルをアップロードする関数
-    private fun uploadFileToGoogleDrive(csvFile: File) {
-        // OAuth 2.0 認証の設定
-        val googleCredentialsJson =
-            requireContext().assets.open("client_secret_537547056657-4dftgq51l3dhqe3o42v4s464m7rp5t2b.apps.googleusercontent.com.json")
-        val clientSecrets = GoogleClientSecrets.load(
-            GsonFactory.getDefaultInstance(),
-            InputStreamReader(googleCredentialsJson)
-        )
-
-        val flow = GoogleAuthorizationCodeFlow.Builder(
-            AndroidHttp.newCompatibleTransport(),
-            GsonFactory.getDefaultInstance(),
-            clientSecrets,
-            Collections.singleton(DriveScopes.DRIVE_FILE)
-        ).setAccessType("offline").build()
-
-        val credential: Credential = flow.loadCredential("user")
-
-        // Drive APIのインスタンスを作成
-        driveService = Drive.Builder(
-            AndroidHttp.newCompatibleTransport(),
-            GsonFactory.getDefaultInstance(),
-            credential
-        ).setApplicationName("Drive API Kotlin App").build()
-
-        // ファイルメタデータの作成
-        val fileMetadata = com.google.api.services.drive.model.File()
-        fileMetadata.name = csvFile.name
-
-        // ファイルのアップロード
-        val mediaContent = FileContent("text/csv", csvFile)
-        val uploadedFile = driveService.files().create(fileMetadata, mediaContent)
-            .setFields("id")
-            .execute()
-
-        Log.d("Drive API", "File uploaded successfully: ${uploadedFile.id}")
-    }
 
     // 修正済みのCSVエクスポート関数
     private fun exportRealmDataToCSV(realm: Realm): File? { // Fileを返すように修正
         val directory =
             requireContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) // アプリ専用の外部ストレージ
         val csvFile = File(directory, "realm_data.csv")
+
 
         return try {
             val fileWriter = FileWriter(csvFile)
